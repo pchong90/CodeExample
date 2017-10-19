@@ -7,7 +7,8 @@
 
 #include "eigen_interface.h"
 #include "type_traits.h"
-#include "davidson_diag.h"
+#include "symm_davidson_diag.h"
+#include "nonsymm_davidson_diag.h"
 
 using namespace code_example;
 

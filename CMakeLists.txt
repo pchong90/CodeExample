@@ -14,7 +14,7 @@ INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
 #FIND_PACKAGE(TBB REQUIRED)
 
 
-set(src davidson_diag.h gram_schmidt.h)
+set(src eigen_interface.h nonsymm_davidson_diag.h type_traits.h symm_davidson_diag.h gram_schmidt.h)
 
 
 add_executable(eigen_test EXCLUDE_FROM_ALL eigen_test.cpp ${src})

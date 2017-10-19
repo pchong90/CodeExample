@@ -56,10 +56,10 @@ public:
   /**
    *
    * @param n_roots number of lowest roots to solve
-
+   *
    * @param n_guess number of eigen vector per root at subspace collapse,
    * default is 2
-
+   *
    * @param max_n_guess max number of guess vector per root, default is 4
    *
    */
@@ -82,10 +82,11 @@ public:
    *
    * @param guess initial guess vector
    * @param op    op(B) should compute HB
-   * @param pred  preconditioner
+   * @param pred  preconditioner, pred(residucal) will precondition the residual
    * @param convergence   convergence threshold
    * @param max_iter  max number of iteration allowd
-   * @return
+   *
+   * @return solved eigen values
    */
   template <typename Operator, typename Pred>
   EigenVector<element_type> solve(value_type &guess, const Operator &op,
@@ -146,10 +147,6 @@ public:
   std::tuple<EigenVector<element_type>, EigenVector<element_type>>
   extrapolate(value_type &HB, value_type &B, const Pred &pred) {
     assert(HB.size() == B.size());
-    // size of new vector
-    const auto n_b = B.size();
-    // size of original subspace
-    const auto n_s = subspace_.cols();
 
     B_.insert(B_.end(), B.begin(), B.end());
     B.clear();
@@ -159,45 +156,14 @@ public:
     // size of new subspace
     const auto n_v = B_.size();
 
-    // compute new subspace
-    // G will be replicated Eigen Matrix
-    {
-      RowMatrix<element_type> G = RowMatrix<element_type>::Zero(n_v, n_v);
-      // reuse stored subspace
-      G.block(0, 0, n_s, n_s) << subspace_;
-      // initialize new value
-      for (std::size_t i = 0; i < n_b; ++i) {
-        const auto ii = i + n_s;
-        for (std::size_t j = 0; j <= ii; ++j) {
-          G(ii, j) = dot_product(B_[ii], HB_[j]);
-          if (ii != j) {
-            G(j, ii) = G(ii, j);
-          }
-        }
-      }
+    // compute the new subspace
+    compute_new_subspace();
 
-      subspace_ = G;
-    }
-
-    // do eigen solve locally
+    // do eigen solve
     result_type E(n_roots_);
     RowMatrix<element_type> C(n_v, n_roots_);
 
-    // symmetric matrix
-    // this return eigenvalue and eigenvector
-    Eigen::SelfAdjointEigenSolver<RowMatrix<element_type>> es(subspace_);
-
-    RowMatrix<element_type> v = es.eigenvectors();
-    EigenVector<element_type> e = es.eigenvalues();
-
-    if (es.info() != Eigen::Success) {
-      throw std::runtime_error("Eigen::SelfAdjointEigenSolver Failed!\n");
-    }
-
-    //        std::cout << es.eigenvalues() << std::endl;
-
-    E = e.segment(0, n_roots_);
-    C = v.leftCols(n_roots_);
+    eigen_solve_subspace(E, C);
 
     // compute eigen_vector at current iteration and store it
     // X(i) = B(i)*C(i)
@@ -272,6 +238,58 @@ public:
     B_.clear();
     subspace_.resize(0, 0);
   }
+
+private:
+
+  virtual void compute_new_subspace(){
+
+    // size of original subspace
+    const auto n_s = subspace_.cols();
+    // size of new subspace
+    const auto n_v = B_.size();
+    // size of new vector
+    const auto n_b = n_v - n_s;
+
+    // compute new subspace
+    // G will be replicated Eigen Matrix
+    {
+      RowMatrix<element_type> G = RowMatrix<element_type>::Zero(n_v, n_v);
+      // reuse stored subspace
+      G.block(0, 0, n_s, n_s) << subspace_;
+      // initialize new value
+      for (std::size_t i = 0; i < n_b; ++i) {
+        const auto ii = i + n_s;
+        for (std::size_t j = 0; j <= ii; ++j) {
+          G(ii, j) = dot_product(B_[ii], HB_[j]);
+          if (ii != j) {
+            G(j, ii) = G(ii, j);
+          }
+        }
+      }
+
+      subspace_ = G;
+    }
+  }
+
+
+  virtual void eigen_solve_subspace(result_type& E, RowMatrix<element_type>& C){
+    // symmetric matrix
+    // this return eigenvalue and eigenvector
+    Eigen::SelfAdjointEigenSolver<RowMatrix<element_type>> es(subspace_);
+
+    RowMatrix<element_type> v = es.eigenvectors();
+    EigenVector<element_type> e = es.eigenvalues();
+
+    if (es.info() != Eigen::Success) {
+      throw std::runtime_error("Eigen::SelfAdjointEigenSolver Failed!\n");
+    }
+
+    //        std::cout << es.eigenvalues() << std::endl;
+
+    E = e.segment(0, n_roots_);
+    C = v.leftCols(n_roots_);
+  }
+
 
 protected:
   unsigned int n_roots_;
