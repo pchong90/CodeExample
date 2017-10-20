@@ -39,7 +39,7 @@ T dot_product(const RowMatrix<T>& x, const RowMatrix<T>& y){
 
 template <typename T>
 T norm2(const RowMatrix<T>& a){
-  return std::sqrt(a.squaredNorm());
+  return a.norm();
 }
 
 } // namespace code_example

@@ -5,6 +5,7 @@
 #ifndef CODE_EXAMPLE_TYPE_TRAITS_H_
 #define CODE_EXAMPLE_TYPE_TRAITS_H_
 
+#include <vector>
 #include "type_def.h"
 
 namespace code_example {
@@ -14,6 +15,11 @@ struct element_type_traits {};
 
 template <typename T>
 struct element_type_traits<RowMatrix<T>> {
+  typedef T type;
+};
+
+template <typename T>
+struct element_type_traits<std::vector<T>> {
   typedef T type;
 };
 
