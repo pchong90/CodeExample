@@ -1,5 +1,5 @@
 //
-// Created by Chong Peng on 10/19/17.
+// Copyright Chong Peng 2017
 //
 
 #ifndef CODE_EXAMPLE_NONSYMM_DAVIDSON_DIAG_H_
