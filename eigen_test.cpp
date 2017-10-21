@@ -17,6 +17,9 @@ int main() {
   std::cout.precision(12);
 
   std::cout << "Davidson Diagnolization Using Eigen Matrix \n";
+  
+  /// typedef the Array type to use
+  using Array = RowMatrix<double>;
 
   // variables
   const std::size_t n = 500;
@@ -43,12 +46,12 @@ int main() {
   std::cout << "EigenSolve result: " << std::endl << e << std::endl;
 
   /// construct the SymmDavidsonDiag  object
-  SymmDavidsonDiag<RowMatrix<double>> dvd(n_roots);
+  SymmDavidsonDiag<Array> dvd(n_roots);
 
   /// make the initial guess use unit vector
-  std::vector<RowMatrix<double>> guess(n_roots);
+  std::vector<Array> guess(n_roots);
   {
-    RowMatrix<double> guess_all = RowMatrix<double>::Identity(n, n_roots);
+    Array guess_all = Array::Identity(n, n_roots);
     for(std::size_t i = 0; i < n_roots; i++){
       guess[i] = guess_all.col(i);
     }
@@ -57,7 +60,7 @@ int main() {
   /// make the preconditioner
 
   auto pred = [&A_diagonal](const EigenVector<double> &e,
-                            std::vector<RowMatrix<double>> &guess) {
+                            std::vector<Array> &guess) {
 
     for (std::size_t i = 0; i < guess.size(); i++) {
       const auto ei = e[i];
@@ -72,10 +75,10 @@ int main() {
   };
 
   /// make the operator
-  auto op = [& A](const std::vector<RowMatrix<double>>& vec){
+  auto op = [& A](const std::vector<Array>& vec){
     const std::size_t n = vec.size();
 
-    std::vector<RowMatrix<double>> HC(n);
+    std::vector<Array> HC(n);
 
     for(std::size_t i = 0; i < n; i++){
       HC[i] = A*vec[i];

@@ -38,8 +38,8 @@ namespace code_example {
  * - `Array copy_zero(const Array& a)`  make a new Array based on a, while initialize all elements as zero
  * - `element_type dot_product(const Array& a, const Array& b)` return dot product of 2 Array a and b
  * - `void scale(Array& y , element_type a)` scale Array y by factor a
- * - `void axpy(Array&y , element_tye a, const Array& z)`
- * - `element_type norm2(const Array& a)` return the norm2 of Array a
+ * - `void axpy(Array&y , element_tye a, const Array& x)` performs y += a*x
+ * - `element_type norm2(const Array& a)` return the L^2 norm of Array a
  *
  */
 // clang-format on

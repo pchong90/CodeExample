@@ -18,6 +18,9 @@ int main() {
 
   std::cout << "Nonsymmetric Davidson Diagnolization Using std::vector \n";
 
+  /// typedef the Array type to use
+  using Array = std::vector<double>;
+
   // variables
   const std::size_t n = 200;
   const double sparse = 0.1;
@@ -44,13 +47,13 @@ int main() {
             << e << std::endl;
 
   /// construct the SymmDavidsonDiag  object
-  NonSymmDavidsonDiag<std::vector<double>> dvd(n_roots);
+  NonSymmDavidsonDiag<Array> dvd(n_roots);
 
   /// make the initial guess use unit vector
-  std::vector<std::vector<double>> guess(n_roots);
+  std::vector<Array> guess(n_roots);
   {
     for (std::size_t i = 0; i < n_roots; i++) {
-      guess[i] = std::vector<double>(n, 0.0);
+      guess[i] = Array(n, 0.0);
       guess[i][i] = 1;
     }
   }
@@ -58,7 +61,7 @@ int main() {
   /// make the preconditioner
 
   auto pred = [&A_diagonal](const EigenVector<double> &e,
-                            std::vector<std::vector<double>> &guess) {
+                            std::vector<Array> &guess) {
 
     for (std::size_t i = 0; i < guess.size(); i++) {
       const auto ei = e[i];
@@ -72,10 +75,10 @@ int main() {
   };
 
   /// make the operator
-  auto op = [&A,n](const std::vector<std::vector<double>> &vec) {
+  auto op = [&A,n](const std::vector<Array> &vec) {
     const std::size_t n_vec = vec.size();
 
-    std::vector<std::vector<double>> HC(n_vec);
+    std::vector<Array> HC(n_vec);
 
     const char trans = 'N';
     const int32_t rows = A.rows();
@@ -84,7 +87,7 @@ int main() {
     const double beta = 0.0;
     const int32_t inc = 1;
     for (std::size_t i = 0; i < n_vec; i++) {
-      HC[i] = std::vector<double>(vec[i].size(), 0.0);
+      HC[i] = Array(vec[i].size(), 0.0);
       dgemv_(&trans, &rows, &cols, &alpha, A.data(), &rows, vec[i].data(), &inc,
              &beta, HC[i].data(), &inc);
     }
