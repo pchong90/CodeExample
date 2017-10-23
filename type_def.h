@@ -1,5 +1,5 @@
 //
-// CopyRight Chong Peng 2017
+// Copyright Chong Peng 2017
 //
 
 #ifndef CODE_EXAMPLE_TYPE_DEF_H_

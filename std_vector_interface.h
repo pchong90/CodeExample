@@ -31,8 +31,10 @@ namespace code_example {
  * currently only support double as element type
  */
 
-inline std::vector<double> copy_zero(const std::vector<double> &a) {
-  return std::vector<double>(a.size(), 0.0);
+inline std::vector<double> copy_and_zero(const std::vector<double> &a) {
+  auto result = std::vector<double>(a.size(), 0.0);
+  result.shrink_to_fit();
+  return result;
 }
 
 inline void scale(std::vector<double> &y, double a) {
@@ -44,6 +46,7 @@ inline void scale(std::vector<double> &y, double a) {
 inline void axpy(std::vector<double> &y, double a,
                  const std::vector<double> &x) {
   int32_t y_size = y.size();
+  assert(y_size == x.size());
   int32_t inc = 1;
   daxpy_(&y_size, &a, x.data(), &inc, y.data(), &inc);
 }
@@ -51,6 +54,7 @@ inline void axpy(std::vector<double> &y, double a,
 inline double dot_product(const std::vector<double> &x,
                           const std::vector<double> &y) {
   int32_t x_size = x.size();
+  assert(x_size == y.size());
   int32_t inc = 1;
   return ddot_(&x_size, x.data(), &inc, y.data(), &inc);
 }

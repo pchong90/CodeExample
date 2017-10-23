@@ -1,5 +1,5 @@
 //
-// CopyRight Chong Peng 2017
+// Copyright Chong Peng 2017
 //
 
 #ifndef CODE_EXAMPLE_EIGEN_INTERFACE_H_
@@ -17,7 +17,7 @@ namespace code_example {
  */
 
 template <typename T>
-RowMatrix<T> copy_zero(const RowMatrix<T>& a){
+RowMatrix<T> copy_and_zero(const RowMatrix<T>& a){
     return RowMatrix<T>::Zero(a.rows(), a.cols());
 }
 

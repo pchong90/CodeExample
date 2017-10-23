@@ -1,5 +1,5 @@
 //
-// CopyRight Chong Peng 2017
+// Copyright Chong Peng 2017
 //
 
 #include <Eigen/Dense>
@@ -43,7 +43,7 @@ int main() {
   Eigen::SelfAdjointEigenSolver<RowMatrix<double>> es(A);
   EigenVector<double> e = es.eigenvalues().segment(0, n_roots);
 
-  std::cout << "EigenSolve result: " << std::endl << e << std::endl;
+  std::cout << "Reference Result from EigenSolve: " << std::endl << e << std::endl;
 
   /// construct the SymmDavidsonDiag  object
   SymmDavidsonDiag<Array> dvd(n_roots);

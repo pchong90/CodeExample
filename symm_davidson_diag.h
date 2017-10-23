@@ -1,5 +1,5 @@
 //
-// CopyRight Chong Peng 2017
+// Copyright Chong Peng 2017
 //
 
 #ifndef CODE_EXAMPLE_DAVIDSON_DIAG_H_
@@ -35,7 +35,7 @@ namespace code_example {
  * \c element_type_traits<Array>::type must be defined, which gives the element type in Array
  *
  *
- * - `Array copy_zero(const Array& a)`  make a new Array based on a, while initialize all elements as zero
+ * - `Array copy_and_zero(const Array& a)`  make a new Array based on a, while initialize all elements as zero
  * - `element_type dot_product(const Array& a, const Array& b)` return dot product of 2 Array a and b
  * - `void scale(Array& y , element_type a)` scale Array y by factor a
  * - `void axpy(Array&y , element_tye a, const Array& x)` performs y += a*x
@@ -169,7 +169,7 @@ public:
     // X(i) = B(i)*C(i)
     value_type X(n_roots_);
     for (std::size_t i = 0; i < n_roots_; ++i) {
-      X[i] = copy_zero(B_[i]);
+      X[i] = copy_and_zero(B_[i]);
       for (std::size_t j = 0; j < n_v; ++j) {
         axpy(X[i], C(j, i), B_[j]);
       }
@@ -187,7 +187,7 @@ public:
     value_type residual(n_roots_);
     EigenVector<element_type> norms(n_roots_);
     for (std::size_t i = 0; i < n_roots_; ++i) {
-      residual[i] = copy_zero(X[i]);
+      residual[i] = copy_and_zero(X[i]);
       const auto e_i = -E[i];
       axpy(residual[i], e_i, X[i]);
       for (std::size_t j = 0; j < n_v; ++j) {

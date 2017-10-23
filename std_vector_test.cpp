@@ -1,5 +1,5 @@
 //
-// CopyRight Chong Peng 2017
+// Copyright Chong Peng 2017
 //
 
 #include <Eigen/Dense>

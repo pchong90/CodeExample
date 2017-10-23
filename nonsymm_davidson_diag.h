@@ -11,8 +11,7 @@ namespace code_example {
 
 namespace detail {
 
-template <typename T, typename Vector>
-struct EigenPair {
+template <typename T, typename Vector> struct EigenPair {
   using element_type = T;
   using result_type = Vector;
 
@@ -37,6 +36,18 @@ struct EigenPair {
 
 } // namespace detail
 
+// clang-format off
+/**
+*  Davidson Algorithm for Non-symmetric systems with real eigenvalues
+*
+*  this Class inherits from SymmDavidsonDiag class and overrides two
+*  differences between NonSymmDavidsonDiag and SymmDavidsonDiag
+*
+*  - void compute_new_subspace(): how the subspace is computed
+*  - void eigen_solve_subspace(result_type &E, RowMatrix<element_type> &C): how the subspace is diagnolized
+*
+*/
+//clang-format on
 template <typename Array>
 class NonSymmDavidsonDiag : public SymmDavidsonDiag<Array> {
 
@@ -56,6 +67,8 @@ public:
   using SymmDavidsonDiag<Array>::extrapolate;
 
 private:
+
+  /// this override function to compute_new_subspace for non-symmetrix systems
   void compute_new_subspace() override {
 
     // size of original subspace
@@ -86,6 +99,7 @@ private:
     }
   }
 
+  /// this override function to do eigen_solve_subspace for non-symmetrix systems
   void eigen_solve_subspace(result_type &E,
                             RowMatrix<element_type> &C) override {
     // nonsymmetric matrix
